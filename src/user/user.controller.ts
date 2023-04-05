@@ -1,9 +1,10 @@
 import { LoginUserDto } from './dto/login-user.dto';
 import { UserResponseInterface } from './types/userResponse.interface';
-import { Controller, Get, Post, Body, Patch, Param, Delete, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, UsePipes, ValidationPipe, Req } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { Request } from 'express';
+import { ExpressRequest } from 'src/types/expressRequest.interface';
 
 @Controller('users')
 export class UserController {
@@ -24,22 +25,7 @@ export class UserController {
   }
 
   @Get()
-  findAll() {
-    return this.userService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(+id, updateUserDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userService.remove(+id);
+  async currentUser(@Req() request: ExpressRequest): Promise<UserResponseInterface> {
+    return this.userService.buildUserResponse(request.user);
   }
 }
