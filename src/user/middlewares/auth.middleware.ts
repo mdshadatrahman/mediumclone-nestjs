@@ -12,7 +12,7 @@ export class AuthMiddleware implements NestMiddleware {
 	) {
 
 	}
-	async use(req: ExpressRequest, res: Response, next: NextFunction) {
+	async use(req: ExpressRequest, _: Response, next: NextFunction) {
 		if (!req.headers.authorization) {
 			req.user = null;
 			next();
