@@ -1,10 +1,13 @@
 import { LoginUserDto } from './dto/login-user.dto';
 import { UserResponseInterface } from './types/userResponse.interface';
-import { Controller, Get, Post, Body, UsePipes, ValidationPipe, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, UsePipes, ValidationPipe, Req, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { Request } from 'express';
 import { ExpressRequest } from 'src/types/expressRequest.interface';
+import { User } from './decorators/user.decorator';
+import { UserEntity } from './entities/user.entity';
+import { AuthGuard } from './guards/auth.guard';
 
 @Controller('users')
 export class UserController {
@@ -25,7 +28,10 @@ export class UserController {
   }
 
   @Get()
-  async currentUser(@Req() request: ExpressRequest): Promise<UserResponseInterface> {
-    return this.userService.buildUserResponse(request.user);
+  @UseGuards(AuthGuard)
+  async currentUser(
+    @User() user: UserEntity,
+  ): Promise<UserResponseInterface> {
+    return this.userService.buildUserResponse(user);
   }
 }
