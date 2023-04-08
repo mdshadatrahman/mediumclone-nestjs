@@ -27,6 +27,11 @@ export class ArticleService {
 		return await this.articleRepository.save(article);
 	}
 
+	async findBySlug(slug: string): Promise<ArticleEntity> {
+		const article = await this.articleRepository.findOne({ where: { slug: slug } });
+		return article;
+	}
+
 	buildArticleResponse(article: ArticleEntity): ArticleResponseInterface {
 		return { article };
 	}
