@@ -1,10 +1,11 @@
-import { Body, Controller, Delete, Get, Param, Post, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { AuthGuard } from 'src/user/guards/auth.guard';
 import { ArticleService } from './article.service';
 import { User } from 'src/user/decorators/user.decorator';
 import { CreateArticleDto } from './dto/createArticle.dto';
 import { UserEntity } from 'src/user/entities/user.entity';
 import { ArticleResponseInterface } from './types/articleResponse.interface';
+import { UpdateArticleDto } from './dto/updateArticle.dto';
 
 @Controller('articles')
 export class ArticleController {
@@ -33,5 +34,17 @@ export class ArticleController {
 	@UseGuards(AuthGuard)
 	async delete(@Param("slug") slug: string, @User() user: UserEntity) {
 		return this.articleService.delete(slug, user);
+	}
+
+	@Put(":slug")
+	@UseGuards(AuthGuard)
+	@UsePipes(ValidationPipe)
+	async update(
+		@Param("slug") slug: string,
+		@User() user: UserEntity,
+		@Body("article") updateArticleDto: UpdateArticleDto
+	): Promise<ArticleResponseInterface> {
+		const updatedArticle = await this.articleService.update(slug, user, updateArticleDto);
+		return this.articleService.buildArticleResponse(updatedArticle);
 	}
 }
