@@ -2,11 +2,12 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateArticleDto } from './dto/createArticle.dto';
 import { ArticleEntity } from './article.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeleteResult, Repository } from 'typeorm';
+import { DeleteResult, Repository, getRepository } from 'typeorm';
 import { UserEntity } from 'src/user/entities/user.entity';
 import { ArticleResponseInterface } from './types/articleResponse.interface';
 import slugify from 'slugify';
 import { UpdateArticleDto } from './dto/updateArticle.dto';
+import { ArticlesResponseInterface } from './types/articlesResponse.interface';
 
 @Injectable()
 export class ArticleService {
@@ -14,6 +15,17 @@ export class ArticleService {
 		@InjectRepository(ArticleEntity)
 		private readonly articleRepository: Repository<ArticleEntity>,
 	) { }
+
+	async findAll(currentUserId: number, query: any): Promise<ArticlesResponseInterface> {
+		const queryBuilder = this.articleRepository.createQueryBuilder('articles')
+			.leftJoinAndSelect('articles.author', 'author');
+
+		const articles = await queryBuilder.getMany();
+		const articlesCount = await queryBuilder.getCount();
+
+		return { articles, articlesCount };
+	}
+
 	async createAritcle(currentUser: UserEntity, createArticleDto: CreateArticleDto): Promise<ArticleEntity> {
 		const article = new ArticleEntity();
 		Object.assign(article, createArticleDto);
@@ -36,9 +48,6 @@ export class ArticleService {
 		return article;
 	}
 
-	async getAll(): Promise<ArticleEntity[]> {
-		return await this.articleRepository.find();
-	}
 
 	async delete(slug: string, user: UserEntity): Promise<DeleteResult> {
 		const article = await this.findBySlug(slug);
