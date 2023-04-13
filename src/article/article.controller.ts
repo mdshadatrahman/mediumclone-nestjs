@@ -6,7 +6,13 @@ import { CreateArticleDto } from './dto/createArticle.dto';
 import { UserEntity } from 'src/user/entities/user.entity';
 import { ArticleResponseInterface } from './types/articleResponse.interface';
 import { UpdateArticleDto } from './dto/updateArticle.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Articles')
+@Controller({
+	version: '1',
+	path: 'articles',
+})
 @Controller('articles')
 export class ArticleController {
 	constructor(

@@ -1,6 +1,11 @@
+import { ApiTags } from '@nestjs/swagger';
 import { TagService } from './tag.service';
 import { Controller, Get } from '@nestjs/common';
-
+@ApiTags('Tags')
+@Controller({
+  version: '1',
+  path: 'tags',
+})
 @Controller('tag')
 export class TagController {
 	constructor(

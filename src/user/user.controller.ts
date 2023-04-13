@@ -3,13 +3,16 @@ import { UserResponseInterface } from './types/userResponse.interface';
 import { Controller, Get, Post, Body, UsePipes, ValidationPipe, Req, UseGuards, Put } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { Request } from 'express';
-import { ExpressRequest } from 'src/types/expressRequest.interface';
 import { User } from './decorators/user.decorator';
 import { UserEntity } from './entities/user.entity';
 import { AuthGuard } from './guards/auth.guard';
 import { UpdateUserDto } from './dto/update-user.dto';
-
+import { ApiTags } from '@nestjs/swagger';
+@ApiTags('Users')
+@Controller({
+  version: '1',
+  path: 'users',
+})
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) { }
