@@ -36,6 +36,12 @@ export class ArticleController {
 		return this.articleService.buildArticleResponse(article);
 	}
 
+	@Get()
+	async getAll(): Promise<ArticleResponseInterface[]> {
+		const articles = await this.articleService.getAll();
+		return articles.map(article => this.articleService.buildArticleResponse(article));
+	}
+
 	@Delete(":slug")
 	@UseGuards(AuthGuard)
 	async delete(@Param("slug") slug: string, @User() user: UserEntity) {

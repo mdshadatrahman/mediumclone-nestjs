@@ -36,6 +36,10 @@ export class ArticleService {
 		return article;
 	}
 
+	async getAll(): Promise<ArticleEntity[]> {
+		return await this.articleRepository.find();
+	}
+
 	async delete(slug: string, user: UserEntity): Promise<DeleteResult> {
 		const article = await this.findBySlug(slug);
 
